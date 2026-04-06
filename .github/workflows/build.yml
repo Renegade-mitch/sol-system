@@ -13,26 +13,38 @@ jobs:
     - name: Checkout repo
       uses: actions/checkout@v4
 
-    - name: Download Pre-built LÖVE APK
-      run: |
-        curl -L -o love.apk https://github.com/love2d/love-android/releases/download/11.5a/love-11.5-android-embed.apk
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
 
-    - name: Inject game.love into APK
-      run: |
-        sudo apt-get install -y zip
-        # The 'embed' version of the APK looks for the game at assets/game.love
-        zip -j -7 love.apk game.love
+    - name: Clone love-android
+      run: git clone --depth 1 https://github.com/love2d/love-android.git
 
-    - name: Align and Sign APK (Debug)
+    - name: Prepare game
       run: |
-        # This makes the APK installable for testing
-        mv love.apk SolSystem-debug.apk
+        mkdir -p love-android/app/src/main/assets
+        cp game.love love-android/app/src/main/assets/
+
+    - name: Change App Identity (Name & ID)
+      run: |
+        # Change the App Name
+        sed -i 's/LÖVE for Android/Sol System/g' love-android/app/src/main/res/values/strings.xml
+        # Change the Package ID so it doesn't conflict with the official LÖVE app
+        sed -i 's/org.love2d.android/com.renegademitch.solsystem/g' love-android/app/build.gradle
+
+    - name: Build APK
+      run: |
+        cd love-android
+        chmod +x gradlew
+        ./gradlew assembleDebug
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
       with:
-        name: Sol-System-APK
-        path: SolSystem-debug.apk
+        name: Sol-System-APK-Standalone
+        path: love-android/app/build/outputs/apk/debug/*.apk
         
 
   windows:
