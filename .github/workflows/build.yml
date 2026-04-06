@@ -35,7 +35,7 @@ jobs:
         ./gradlew assembleDebug
 
     - name: Upload APK
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: Sol-System-APK
         path: love-android/app/build/outputs/apk/debug/*.apk
@@ -67,7 +67,7 @@ jobs:
         copy love-11.5-win64\*.dll dist\
 
     - name: Upload EXE
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: Sol-System-Windows
         path: dist/
