@@ -34,6 +34,7 @@ jobs:
         path: build/
 
   # --- ANDROID BUILD ---
+  # --- ANDROID BUILD ---
   android:
     runs-on: ubuntu-latest
     steps:
@@ -47,26 +48,19 @@ jobs:
         distribution: 'temurin'
 
     - name: Clone love-android source
-      uses: actions/checkout@v4
-      with:
-        repository: love2d/love-android
-        path: love-android-src
-        # CRITICAL FIX: This pulls in the actual LÖVE C++ engine code 
-        # so CMake doesn't crash with an "Exit value 1"
-        submodules: recursive 
+      # CRITICAL FIX: Direct git clone works much better for deeply nested submodules 
+      # than the actions/checkout tool, which often misses folders like 'freetype'.
+      run: |
+        git clone --branch 11.5a --recurse-submodules https://github.com/love2d/love-android.git love-android-src
 
     - name: Prepare game files
       run: |
-        # Put game.love in the correct "embed" folder for modern LÖVE Android builds
         mkdir -p love-android-src/app/src/embed/assets
         cp game.love love-android-src/app/src/embed/assets/
 
     - name: Configure App Identity
       run: |
-        # Change the internal ID so your phone installs it as a standalone app
         sed -i 's/org.love2d.android/com.renegademitch.solsystem/g' love-android-src/app/build.gradle
-        
-        # Change the App Name to "Sol System"
         find love-android-src -name "strings.xml" -exec sed -i 's/LÖVE for Android/Sol System/g' {} +
 
     - name: Build APK
