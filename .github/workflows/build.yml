@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repo
+    - name: Checkout your repo
       uses: actions/checkout@v4
 
     - name: Set up JDK 17
@@ -19,24 +19,30 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
-    - name: Clone love-android
-      run: git clone --depth 1 https://github.com/love2d/love-android.git
+    # Using the official checkout action to clone the Android source is more stable
+    - name: Clone love-android source
+      uses: actions/checkout@v4
+      with:
+        repository: love2d/love-android
+        path: love-android-src
+        ref: main
 
-    - name: Prepare game
+    - name: Prepare game files
       run: |
-        mkdir -p love-android/app/src/main/assets
-        cp game.love love-android/app/src/main/assets/
+        mkdir -p love-android-src/app/src/main/assets
+        cp game.love love-android-src/app/src/main/assets/
 
     - name: Change App Identity (Name & ID)
       run: |
-        # Change the App Name
-        sed -i 's/LÖVE for Android/Sol System/g' love-android/app/src/main/res/values/strings.xml
-        # Change the Package ID so it doesn't conflict with the official LÖVE app
-        sed -i 's/org.love2d.android/com.renegademitch.solsystem/g' love-android/app/build.gradle
+        # This finds the strings.xml file wherever it is and renames the app
+        find love-android-src -name "strings.xml" -exec sed -i 's/LÖVE for Android/Sol System/g' {} +
+        
+        # This changes the internal ID so it doesn't conflict with the LÖVE app
+        sed -i 's/org.love2d.android/com.renegademitch.solsystem/g' love-android-src/app/build.gradle
 
     - name: Build APK
       run: |
-        cd love-android
+        cd love-android-src
         chmod +x gradlew
         ./gradlew assembleDebug
 
@@ -44,7 +50,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: Sol-System-APK-Standalone
-        path: love-android/app/build/outputs/apk/debug/*.apk
+        path: love-android-src/app/build/outputs/apk/debug/*.apk
         
 
   windows:
