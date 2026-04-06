@@ -73,4 +73,6 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: Sol-System-Android-APK
-        path: love-android-src/app/build/outputs/apk/debug/*.apk
+        # This double asterisk (**) tells GitHub to search all subfolders 
+        # inside 'build' until it finds the .apk file.
+        path: love-android-src/app/build/outputs/apk/**/*.apk
