@@ -6,22 +6,19 @@ on:
 
 jobs:
 
-  # =========================
-  # ANDROID APK BUILD
-  # =========================
   android:
     runs-on: ubuntu-latest
 
     steps:
     - name: Checkout repo
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Clone love-android
       run: git clone https://github.com/love2d/love-android.git
 
     - name: Prepare game
       run: |
-        rm -rf love-android/app/src/main/assets/*
+        mkdir -p love-android/app/src/main/assets
         cp game.love love-android/app/src/main/assets/
 
     - name: Rename app
@@ -41,30 +38,29 @@ jobs:
         path: love-android/app/build/outputs/apk/debug/*.apk
 
 
-  # =========================
-  # WINDOWS EXE BUILD
-  # =========================
   windows:
     runs-on: windows-latest
 
     steps:
     - name: Checkout repo
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Download LÖVE
       run: |
         curl -L -o love.zip https://github.com/love2d/love/releases/download/11.5/love-11.5-win64.zip
         powershell -Command "Expand-Archive love.zip"
 
-    - name: Create EXE
+    - name: Build EXE
+      shell: cmd
       run: |
         copy /b love-11.5-win64\love.exe+game.love SolSystem.exe
 
-    - name: Package files
+    - name: Prepare folder
+      shell: cmd
       run: |
         mkdir dist
-        copy SolSystem.exe dist\
-        copy love-11.5-win64\*.dll dist\
+        move SolSystem.exe dist
+        copy love-11.5-win64\*.dll dist
 
     - name: Upload EXE
       uses: actions/upload-artifact@v4
