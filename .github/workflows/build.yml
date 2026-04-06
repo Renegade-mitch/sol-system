@@ -7,7 +7,8 @@ on:
 jobs:
 
   android:
-    runs-on: ubuntu-latest
+    # Using 22.04 is more stable for Android builds than 'latest'
+    runs-on: ubuntu-22.04
 
     steps:
     - name: Checkout your repo
@@ -19,7 +20,6 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
-    # Using the official checkout action to clone the Android source is more stable
     - name: Clone love-android source
       uses: actions/checkout@v4
       with:
@@ -32,13 +32,17 @@ jobs:
         mkdir -p love-android-src/app/src/main/assets
         cp game.love love-android-src/app/src/main/assets/
 
-    - name: Change App Identity (Name & ID)
+    - name: Configure App Identity & Environment
       run: |
-        # This finds the strings.xml file wherever it is and renames the app
+        # Change the internal ID so it's a separate app
+        sed -i 's/org.love2d.android/com.renegademitch.solsystem/g' love-android-src/app/build.gradle
+        
+        # Change the App Name
+        # We use a wild-card search to find strings.xml regardless of its exact path
         find love-android-src -name "strings.xml" -exec sed -i 's/LÖVE for Android/Sol System/g' {} +
         
-        # This changes the internal ID so it doesn't conflict with the LÖVE app
-        sed -i 's/org.love2d.android/com.renegademitch.solsystem/g' love-android-src/app/build.gradle
+        # FIX: Point Gradle to the specific NDK version to avoid the CMake error
+        echo "ndk.dir=$ANDROID_SDK_ROOT/ndk-bundle" > love-android-src/local.properties
 
     - name: Build APK
       run: |
