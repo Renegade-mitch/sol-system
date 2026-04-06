@@ -7,7 +7,7 @@ on:
 jobs:
 
   android:
-    # Using 22.04 is more stable for Android builds than 'latest'
+    # We stay on 22.04 to ensure the CMake version is compatible
     runs-on: ubuntu-22.04
 
     steps:
@@ -32,22 +32,20 @@ jobs:
         mkdir -p love-android-src/app/src/main/assets
         cp game.love love-android-src/app/src/main/assets/
 
-    - name: Configure App Identity & Environment
+    - name: Configure App Identity
       run: |
         # Change the internal ID so it's a separate app
         sed -i 's/org.love2d.android/com.renegademitch.solsystem/g' love-android-src/app/build.gradle
         
         # Change the App Name
-        # We use a wild-card search to find strings.xml regardless of its exact path
+        # We search for strings.xml and replace the default title
         find love-android-src -name "strings.xml" -exec sed -i 's/LÖVE for Android/Sol System/g' {} +
-        
-        # FIX: Point Gradle to the specific NDK version to avoid the CMake error
-        echo "ndk.dir=$ANDROID_SDK_ROOT/ndk-bundle" > love-android-src/local.properties
 
     - name: Build APK
       run: |
         cd love-android-src
         chmod +x gradlew
+        # We removed the manual ndk.dir setting to avoid the previous error
         ./gradlew assembleDebug
 
     - name: Upload APK
