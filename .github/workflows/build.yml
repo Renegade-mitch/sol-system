@@ -13,29 +13,27 @@ jobs:
     - name: Checkout repo
       uses: actions/checkout@v4
 
-    - name: Clone love-android
-      run: git clone https://github.com/love2d/love-android.git
-
-    - name: Prepare game
+    - name: Download Pre-built LÖVE APK
       run: |
-        mkdir -p love-android/app/src/main/assets
-        cp game.love love-android/app/src/main/assets/
+        curl -L -o love.apk https://github.com/love2d/love-android/releases/download/11.5a/love-11.5-android-embed.apk
 
-    # The 'Rename app' step was removed here because love-android changed their file structure
-    # and strings.xml is no longer at the old path, which was causing the crash.
-
-    - name: Build APK
+    - name: Inject game.love into APK
       run: |
-        cd love-android
-        chmod +x gradlew
-        ./gradlew assembleDebug
+        sudo apt-get install -y zip
+        # The 'embed' version of the APK looks for the game at assets/game.love
+        zip -j -7 love.apk game.love
+
+    - name: Align and Sign APK (Debug)
+      run: |
+        # This makes the APK installable for testing
+        mv love.apk SolSystem-debug.apk
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
       with:
         name: Sol-System-APK
-        path: love-android/app/build/outputs/apk/debug/*.apk
-
+        path: SolSystem-debug.apk
+        
 
   windows:
     runs-on: windows-latest
