@@ -60,9 +60,10 @@ jobs:
       run: |
         sed -i 's/org\.love2d\.android/com.renegademitch.solsystem/g' love-android-src/app/build.gradle
         sed -i 's/org\.love2d\.android/com.renegademitch.solsystem/g' love-android-src/app/src/main/AndroidManifest.xml
+        sed -i 's/<activity android:name="com.renegademitch.solsystem.GameActivity"/<activity android:name="com.renegademitch.solsystem.GameActivity" android:exported="true"/g' love-android-src/app/src/main/AndroidManifest.xml
         mkdir -p love-android-src/app/src/main/res/values
         printf '<?xml version="1.0" encoding="utf-8"?>\n<resources>\n    <string name="app_name">Sol System</string>\n</resources>\n' > love-android-src/app/src/main/res/values/strings.xml
-
+        
     - name: Build APK
       run: |
         cd love-android-src
