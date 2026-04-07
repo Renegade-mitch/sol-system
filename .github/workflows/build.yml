@@ -48,10 +48,8 @@ jobs:
         distribution: 'temurin'
 
     - name: Clone love-android source
-      # CRITICAL FIX: Direct git clone works much better for deeply nested submodules 
-      # than the actions/checkout tool, which often misses folders like 'freetype'.
       run: |
-        git clone --branch 11.5a --recurse-submodules https://github.com/love2d/love-android.git love-android-src
+        git clone --branch 11.5a --recurse-submodules https://github.com/love2d/love-android love-android-src
 
     - name: Prepare game files
       run: |
@@ -61,8 +59,7 @@ jobs:
     - name: Configure App Identity
       run: |
         sed -i 's/org.love2d.android/com.renegademitch.solsystem/g' love-android-src/app/build.gradle
-        sed -i 's/<string name="app_name">LÖVE<\/string>/<string name="app_name">Sol System<\/string>/g' love-android-src/app/src/main/res/values/strings.xml
-
+        sed -i 's/>LÖVE</>Sol System</g' love-android-src/app/src/main/res/values/strings.xml
     - name: Build APK
       run: |
         cd love-android-src
