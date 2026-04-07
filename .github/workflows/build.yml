@@ -60,12 +60,14 @@ jobs:
 
     - name: Configure App Identity
       run: |
-        sed -i 's/org\.love2d\.android/com.renegademitch.solsystem/g' love-android-src/app/build.gradle
+        # Target applicationId specifically in build.gradle
+        sed -i 's/applicationId "org.love2d.android"/applicationId "com.renegademitch.solsystem"/g' love-android-src/app/build.gradle
 
-        # Patch ALL manifests in the repo at once
+        # Patch all manifests
         find love-android-src -name "AndroidManifest.xml" -exec sed -i 's/org\.love2d\.android/com.renegademitch.solsystem/g' {} \;
         find love-android-src -name "AndroidManifest.xml" -exec sed -i 's/<activity android:name="com.renegademitch.solsystem.GameActivity"/<activity android:name="com.renegademitch.solsystem.GameActivity" android:exported="true"/g' {} \;
 
+        # Write app name
         mkdir -p love-android-src/app/src/main/res/values
         printf '<?xml version="1.0" encoding="utf-8"?>\n<resources>\n    <string name="app_name">Sol System</string>\n</resources>\n' > love-android-src/app/src/main/res/values/strings.xml
         
