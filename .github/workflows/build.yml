@@ -60,6 +60,7 @@ jobs:
       run: |
         sed -i 's/org.love2d.android/com.renegademitch.solsystem/g' love-android-src/app/build.gradle
         sed -i 's/>LÖVE</>Sol System</g' love-android-src/app/src/main/res/values/strings.xml
+
     - name: Build APK
       run: |
         cd love-android-src
