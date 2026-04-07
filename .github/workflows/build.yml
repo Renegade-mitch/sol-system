@@ -59,6 +59,10 @@ jobs:
         mkdir -p love-android-src/app/src/embed/assets
         cp game.love love-android-src/app/src/embed/assets/
 
+    - name: Debug game.love
+      run: |
+        unzip -l love-android-src/app/src/embed/assets/game.love | head -30
+
     - name: Configure App Identity
       run: |
         # This is the correct file
