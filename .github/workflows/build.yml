@@ -55,7 +55,8 @@ jobs:
 
     - name: Debug properties
       run: |
-        cat love-android-src/project.properties
+        find love-android-src -name "*.properties" | xargs grep -l "application_id" 2>/dev/null
+        find love-android-src -name "*.properties" | xargs grep "application_id" 2>/dev/null
         
     - name: Prepare game files
       run: |
