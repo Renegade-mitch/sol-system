@@ -61,7 +61,7 @@ jobs:
     - name: Configure App Identity
       run: |
         sed -i 's/org.love2d.android/com.renegademitch.solsystem/g' love-android-src/app/build.gradle
-        find love-android-src -name "strings.xml" -exec sed -i 's/LÖVE for Android/Sol System/g' {} +
+        sed -i 's/<string name="app_name">LÖVE<\/string>/<string name="app_name">Sol System<\/string>/g' love-android-src/app/src/main/res/values/strings.xml
 
     - name: Build APK
       run: |
@@ -73,6 +73,4 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: Sol-System-Android-APK
-        # This double asterisk (**) tells GitHub to search all subfolders 
-        # inside 'build' until it finds the .apk file.
         path: love-android-src/app/build/outputs/apk/**/*.apk
