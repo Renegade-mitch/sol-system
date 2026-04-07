@@ -53,10 +53,7 @@ jobs:
       run: |
         git clone --branch 11.5a --recurse-submodules https://github.com/love2d/love-android love-android-src
 
-    - name: Debug build.gradle
-      run: |
-        grep -n "applicationId\|namespace\|package" love-android-src/app/build.gradle
-
+    
     - name: Prepare game files
       run: |
         mkdir -p love-android-src/app/src/embed/assets
@@ -64,17 +61,19 @@ jobs:
 
     - name: Configure App Identity
       run: |
-        # Target applicationId specifically in build.gradle
-        sed -i 's/applicationId "org.love2d.android"/applicationId "com.renegademitch.solsystem"/g' love-android-src/app/build.gradle
+        # Patch the properties file where applicationId actually comes from
+        sed -i 's/app.application_id=org.love2d.android/app.application_id=com.renegademitch.solsystem/g' love-android-src/project.properties
+
+        # Patch namespace in build.gradle
+        sed -i 's/namespace "org.love2d.android.executable"/namespace "com.renegademitch.solsystem"/g' love-android-src/app/build.gradle
 
         # Patch all manifests
         find love-android-src -name "AndroidManifest.xml" -exec sed -i 's/org\.love2d\.android/com.renegademitch.solsystem/g' {} \;
         find love-android-src -name "AndroidManifest.xml" -exec sed -i 's/<activity android:name="com.renegademitch.solsystem.GameActivity"/<activity android:name="com.renegademitch.solsystem.GameActivity" android:exported="true"/g' {} \;
 
-        # Write app name
         mkdir -p love-android-src/app/src/main/res/values
         printf '<?xml version="1.0" encoding="utf-8"?>\n<resources>\n    <string name="app_name">Sol System</string>\n</resources>\n' > love-android-src/app/src/main/res/values/strings.xml
-        
+    
     - name: Build APK
       run: |
         cd love-android-src
