@@ -53,11 +53,7 @@ jobs:
       run: |
         git clone --branch 11.5a --recurse-submodules https://github.com/love2d/love-android love-android-src
 
-    - name: Debug properties
-      run: |
-        find love-android-src -name "*.properties" | xargs grep -l "application_id" 2>/dev/null
-        find love-android-src -name "*.properties" | xargs grep "application_id" 2>/dev/null
-        
+    
     - name: Prepare game files
       run: |
         mkdir -p love-android-src/app/src/embed/assets
@@ -65,8 +61,8 @@ jobs:
 
     - name: Configure App Identity
       run: |
-        # Patch the properties file where applicationId actually comes from
-        sed -i 's/app.application_id=org.love2d.android/app.application_id=com.renegademitch.solsystem/g' love-android-src/project.properties
+        # This is the correct file
+        sed -i 's/app.application_id=org.love2d.android/app.application_id=com.renegademitch.solsystem/g' love-android-src/gradle.properties
 
         # Patch namespace in build.gradle
         sed -i 's/namespace "org.love2d.android.executable"/namespace "com.renegademitch.solsystem"/g' love-android-src/app/build.gradle
@@ -77,7 +73,7 @@ jobs:
 
         mkdir -p love-android-src/app/src/main/res/values
         printf '<?xml version="1.0" encoding="utf-8"?>\n<resources>\n    <string name="app_name">Sol System</string>\n</resources>\n' > love-android-src/app/src/main/res/values/strings.xml
-    
+        
     - name: Build APK
       run: |
         cd love-android-src
