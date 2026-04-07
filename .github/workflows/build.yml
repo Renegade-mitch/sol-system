@@ -58,8 +58,10 @@ jobs:
 
     - name: Configure App Identity
       run: |
-        sed -i 's/org.love2d.android/com.renegademitch.solsystem/g' love-android-src/app/build.gradle
-        sed -i 's/>LÖVE</>Sol System</g' love-android-src/app/src/main/res/values/strings.xml
+        sed -i 's/org\.love2d\.android/com.renegademitch.solsystem/g' love-android-src/app/build.gradle
+        sed -i 's/org\.love2d\.android/com.renegademitch.solsystem/g' love-android-src/app/src/main/AndroidManifest.xml
+        mkdir -p love-android-src/app/src/main/res/values
+        printf '<?xml version="1.0" encoding="utf-8"?>\n<resources>\n    <string name="app_name">Sol System</string>\n</resources>\n' > love-android-src/app/src/main/res/values/strings.xml
 
     - name: Build APK
       run: |
