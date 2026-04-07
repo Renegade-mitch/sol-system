@@ -53,7 +53,10 @@ jobs:
       run: |
         git clone --branch 11.5a --recurse-submodules https://github.com/love2d/love-android love-android-src
 
-    
+    - name: Debug properties
+      run: |
+        cat love-android-src/project.properties
+        
     - name: Prepare game files
       run: |
         mkdir -p love-android-src/app/src/embed/assets
