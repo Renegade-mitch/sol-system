@@ -53,6 +53,11 @@ jobs:
       run: |
         git clone --branch 11.5a --recurse-submodules https://github.com/love2d/love-android love-android-src
 
+    - name: Debug icon
+      run: |
+        grep -r "icon" love-android-src/app/src/main/AndroidManifest.xml
+        ls love-android-src/app/src/main/res/mipmap-hdpi/
+
     
     - name: Prepare game files
       run: |
