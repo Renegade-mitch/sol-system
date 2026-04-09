@@ -76,10 +76,14 @@ jobs:
 
     - name: Set App Icon
       run: |
-        for size in mdpi hdpi xhdpi xxhdpi xxxhdpi; do
-          mkdir -p love-android-src/app/src/main/res/mipmap-$size
-          cp icon.png love-android-src/app/src/main/res/mipmap-$size/love.png
-        done
+        sudo apt-get install -y imagemagick
+        # Resize to correct sizes for each density
+        convert love-android-src/app/src/main/res/mipmap-mdpi/love.png -resize 48x48 /tmp/icon_mdpi.png
+        convert icon.png -resize 48x48  love-android-src/app/src/main/res/mipmap-mdpi/love.png
+        convert icon.png -resize 72x72  love-android-src/app/src/main/res/mipmap-hdpi/love.png
+        convert icon.png -resize 96x96  love-android-src/app/src/main/res/mipmap-xhdpi/love.png
+        convert icon.png -resize 144x144 love-android-src/app/src/main/res/mipmap-xxhdpi/love.png
+        convert icon.png -resize 192x192 love-android-src/app/src/main/res/mipmap-xxxhdpi/love.png
         
     - name: Build APK
       run: |
