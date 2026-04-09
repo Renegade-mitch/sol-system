@@ -55,9 +55,9 @@ jobs:
 
     - name: Debug icon
       run: |
-        ls love-android-src/app/src/main/res/drawable/
-        file love-android-src/app/src/main/res/drawable/love.png
-    
+        find love-android-src -name "love.png" 2>/dev/null
+        find love-android-src -name "*.png" | head -20
+        
     - name: Prepare game files
       run: |
         mkdir -p love-android-src/app/src/embed/assets
