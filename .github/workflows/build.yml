@@ -53,21 +53,13 @@ jobs:
       run: |
         git clone --branch 11.5a --recurse-submodules https://github.com/love2d/love-android love-android-src
 
-    - name: Debug icon
-      run: |
-        grep -r "icon" love-android-src/app/src/main/AndroidManifest.xml
-        ls love-android-src/app/src/main/res/mipmap-hdpi/
-
     
     - name: Prepare game files
       run: |
         mkdir -p love-android-src/app/src/embed/assets
         cp game.love love-android-src/app/src/embed/assets/
 
-    - name: Debug game.love
-      run: |
-        unzip -l love-android-src/app/src/embed/assets/game.love | head -30
-
+    
     - name: Configure App Identity
       run: |
         # 1. Change the Application ID (How the phone identifies the app - NO manifest patching needed!)
@@ -82,17 +74,9 @@ jobs:
     - name: Set App Icon
       run: |
         sudo apt-get install -y imagemagick
-        mkdir -p love-android-src/app/src/main/res/mipmap-mdpi
-        mkdir -p love-android-src/app/src/main/res/mipmap-hdpi
-        mkdir -p love-android-src/app/src/main/res/mipmap-xhdpi
-        mkdir -p love-android-src/app/src/main/res/mipmap-xxhdpi
-        mkdir -p love-android-src/app/src/main/res/mipmap-xxxhdpi
-        convert icon.png -resize 48x48   love-android-src/app/src/main/res/mipmap-mdpi/love.png
-        convert icon.png -resize 72x72   love-android-src/app/src/main/res/mipmap-hdpi/love.png
-        convert icon.png -resize 96x96   love-android-src/app/src/main/res/mipmap-xhdpi/love.png
-        convert icon.png -resize 144x144 love-android-src/app/src/main/res/mipmap-xxhdpi/love.png
-        convert icon.png -resize 192x192 love-android-src/app/src/main/res/mipmap-xxxhdpi/love.png
-        
+        mkdir -p love-android-src/app/src/main/res/drawable
+        convert icon.png -resize 192x192 love-android-src/app/src/main/res/drawable/love.png
+    
     - name: Build APK
       run: |
         cd love-android-src
