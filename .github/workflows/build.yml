@@ -53,11 +53,7 @@ jobs:
       run: |
         git clone --branch 11.5a --recurse-submodules https://github.com/love2d/love-android love-android-src
 
-    - name: Debug icon
-      run: |
-        find love-android-src -name "love.png" 2>/dev/null
-        find love-android-src -name "*.png" | head -20
-        
+    
     - name: Prepare game files
       run: |
         mkdir -p love-android-src/app/src/embed/assets
@@ -78,9 +74,12 @@ jobs:
     - name: Set App Icon
       run: |
         sudo apt-get install -y imagemagick
-        mkdir -p love-android-src/app/src/main/res/drawable
-        convert icon.png -resize 192x192 love-android-src/app/src/main/res/drawable/love.png
-    
+        convert icon.png -resize 48x48   love-android-src/app/src/main/res/drawable-mdpi/love.png
+        convert icon.png -resize 72x72   love-android-src/app/src/main/res/drawable-hdpi/love.png
+        convert icon.png -resize 96x96   love-android-src/app/src/main/res/drawable-xhdpi/love.png
+        convert icon.png -resize 144x144 love-android-src/app/src/main/res/drawable-xxhdpi/love.png
+        convert icon.png -resize 192x192 love-android-src/app/src/main/res/drawable-xxxhdpi/love.png
+        
     - name: Build APK
       run: |
         cd love-android-src
